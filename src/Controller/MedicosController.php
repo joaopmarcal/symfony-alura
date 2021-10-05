@@ -8,8 +8,9 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class MedicosController
+class MedicosController extends AbstractController
 {
 
     private $entityManager;
@@ -35,5 +36,36 @@ class MedicosController
         $this->entityManager->flush();
 
         return new JsonResponse($medico);
+    }
+
+    /**
+     * @Route("/medicos",methods={"GET"})
+     */
+    public function buscarTodos(): Response
+    {
+        $repositorioDeMedicos = $this
+        ->getDoctrine()
+        ->getRepository(Medico::class);
+
+        $medicoList = $repositorioDeMedicos->findAll();
+
+        return new JsonResponse($medicoList);
+    }
+
+    /**
+     * @Route("/medicos/{id}", methods={"GET"})
+     */
+    public function buscarUm(Request $request): Response
+    {
+        $id = $request->get('id');
+        $repositorioDeMedicos = $this
+        ->getDoctrine()
+        ->getRepository(Medico::class);
+
+        $medico = $repositorioDeMedicos->find($id);
+
+        $codigoRetorno = is_null($medico) ? Response::HTTP_NO_CONTENT : 200;
+
+        return new JsonResponse($medico,$codigoRetorno);
     }
 }
