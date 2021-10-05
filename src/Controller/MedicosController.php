@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Medico;
+use App\Helper\MedicoFactory;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,10 +15,14 @@ class MedicosController extends AbstractController
 {
 
     private $entityManager;
+    private $medicoFactory;
 
-    public function __construct(EntityManagerInterface $entityManager)
-    {
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        MedicoFactory $medicoFactory
+    ) {
         $this->entityManager = $entityManager;
+        $this->medicoFactory = $medicoFactory;
     }
 
     /**
@@ -26,11 +31,7 @@ class MedicosController extends AbstractController
     public function novo(Request $request): Response
     {
         $corpoRequisicao = $request->getContent();
-        $dadoEmJson = json_decode($corpoRequisicao);
-
-        $medico = new Medico();
-        $medico->crm = $dadoEmJson->crm;
-        $medico->nome = $dadoEmJson->nome;
+        $medico = $this->medicoFactory->criarMedico($corpoRequisicao);
 
         $this->entityManager->persist($medico);
         $this->entityManager->flush();
@@ -57,11 +58,8 @@ class MedicosController extends AbstractController
      */
     public function buscarUm(int $id): Response
     {
-        $repositorioDeMedicos = $this
-        ->getDoctrine()
-        ->getRepository(Medico::class);
 
-        $medico = $repositorioDeMedicos->find($id);
+        $medico = $this->buscaMedico($id);
 
         $codigoRetorno = is_null($medico) ? Response::HTTP_NO_CONTENT : 200;
 
@@ -75,17 +73,9 @@ class MedicosController extends AbstractController
     {
 
         $corpoRequisicao = $request->getContent();
-        $dadoEmJson = json_decode($corpoRequisicao);
+        $medicoEnviado = $this->medicoFactory->criarMedico($corpoRequisicao);
 
-        $medicoEnviado = new Medico();
-        $medicoEnviado->crm = $dadoEmJson->crm;
-        $medicoEnviado->nome = $dadoEmJson->nome;
-
-        $repositorioDeMedicos = $this
-        ->getDoctrine()
-        ->getRepository(Medico::class);
-
-        $medicoExistente = $repositorioDeMedicos->find($id);
+        $medicoExistente = $this->buscaMedico($id);
         if(is_null($medicoExistente)){
             return new Response('', Response::HTTP_NOT_FOUND);
         }
@@ -97,5 +87,15 @@ class MedicosController extends AbstractController
 
         return new JsonResponse($medicoExistente);
 
+    }
+
+    public function buscaMedico(int $id)
+    {
+        $repositorioDeMedicos = $this
+        ->getDoctrine()
+        ->getRepository(Medico::class);
+
+        $medico = $repositorioDeMedicos->find($id);
+        return $medico;
     }
 }
