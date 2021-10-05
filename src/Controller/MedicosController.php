@@ -98,4 +98,16 @@ class MedicosController extends AbstractController
         $medico = $repositorioDeMedicos->find($id);
         return $medico;
     }
+
+    /**
+     * @Route("/medicos/{id}", methods={"DELETE"})
+     */
+    public function remove(int $id): Response
+    {
+        $medico = $this->buscaMedico($id);
+        $this->entityManager->remove($medico);
+        $this->entityManager->flush();
+
+        return new Response('', Response::HTTP_NO_CONTENT);
+    }
 }
