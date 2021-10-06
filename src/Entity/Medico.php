@@ -24,4 +24,22 @@ class Medico
      * @ORM\Column(type="string")
      */
     public $nome;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\especialidade")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $especialidade;
+
+    public function getEspecialidade(): ?especialidade
+    {
+        return $this->especialidade;
+    }
+
+    public function setEspecialidade(?especialidade $especialidade): self
+    {
+        $this->especialidade = $especialidade;
+
+        return $this;
+    }
 }
