@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Especialidade;
+use App\Repository\EspecialidadeRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,9 +13,15 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class EspecialidadesController extends AbstractController
 {
-    public function __construct(EntityManagerInterface $entityManager)
-    {
+    private $entityManager;
+    private $repository;
+
+    public function __construct(
+        EntityManagerInterface $entityManager,
+        EspecialidadeRepository $repository
+    ) {
         $this->entityManager = $entityManager;
+        $this->repository = $repository;
     }
     /**
      * @Route("/especialidades", methods={"POST"})
@@ -31,5 +38,23 @@ class EspecialidadesController extends AbstractController
         $this->entityManager->flush();
 
         return new JsonResponse($especialidade);
+    }
+
+    /**
+     * @Route("/especialidades", methods={"GET"})
+     */
+    public function buscarTodas(): Response
+    {
+        $especialidadeList = $this->repository->findAll();
+
+        return new JsonResponse($especialidadeList);
+    }
+
+    /**
+     * @Route("/especialidades/{id}", methods={"GET"})
+     */
+    public function buscarUma(int $id): Response
+    {
+        return new JsonResponse($this->repository->find($id));
     }
 }
