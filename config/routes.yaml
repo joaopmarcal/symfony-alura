@@ -7,6 +7,12 @@ especialidades:
   methods:
     - GET
 
+criar_especialidades:
+  path: /especialidades
+  controller: App\Controller\EspecialidadesController::novo
+  methods:
+    - POST
+
 especialidade:
   path: /especialidades/{id}
   controller: App\Controller\EspecialidadesController:buscarUm
@@ -24,6 +30,12 @@ medicos:
   controller: App\Controller\MedicosController::buscarTodos
   methods:
     - GET
+
+criar_medico:
+  path: /medicos
+  controller: App\Controller\MedicosController::novo
+  methods:
+    - POST
 
 medico:
   path: /medicos/{id}

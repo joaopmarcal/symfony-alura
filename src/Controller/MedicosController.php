@@ -14,30 +14,12 @@ use Doctrine\ORM\EntityManagerInterface;
 class MedicosController extends BaseController
 {
 
-    private $medicoFactory;
-
     public function __construct(
         EntityManagerInterface $entityManager,
         MedicoFactory $medicoFactory,
         MedicosRepository $medicosRepository
     ) {
-        parent::__construct($medicosRepository, $entityManager);
-        $this->entityManager = $entityManager;
-        $this->medicoFactory = $medicoFactory;
-    }
-
-    /**
-     * @Route("/medicos", methods={"POST"})
-     */
-    public function novo(Request $request): Response
-    {
-        $corpoRequisicao = $request->getContent();
-        $medico = $this->medicoFactory->criarMedico($corpoRequisicao);
-
-        $this->entityManager->persist($medico);
-        $this->entityManager->flush();
-
-        return new JsonResponse($medico);
+        parent::__construct($medicosRepository, $entityManager,$medicoFactory);
     }
 
     /**
@@ -47,7 +29,7 @@ class MedicosController extends BaseController
     {
 
         $corpoRequisicao = $request->getContent();
-        $medicoEnviado = $this->medicoFactory->criarMedico($corpoRequisicao);
+        $medicoEnviado = $this->factory->criarMedico($corpoRequisicao);
 
         $medicoExistente = $this->buscaMedico($id);
         if(is_null($medicoExistente)){

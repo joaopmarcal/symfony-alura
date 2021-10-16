@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Helper\EspecialidadeFactory;
 use App\Entity\Especialidade;
 use App\Repository\EspecialidadeRepository;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -15,25 +16,10 @@ class EspecialidadesController extends BaseController
 
     public function __construct(
         EntityManagerInterface $entityManager,
-        EspecialidadeRepository $repository
+        EspecialidadeRepository $repository,
+        EspecialidadeFactory $factory
     ) {
-        parent::__construct($repository, $entityManager);
-    }
-    /**
-     * @Route("/especialidades", methods={"POST"})
-     */
-    public function nova(Request $request): Response
-    {
-        $dadosRequest = $request->getContent();
-        $dadosEmJson = json_decode($dadosRequest);
-
-        $especialidade = new Especialidade();
-        $especialidade->setDescricao($dadosEmJson->descricao);
-
-        $this->entityManager->persist($especialidade);
-        $this->entityManager->flush();
-
-        return new JsonResponse($especialidade);
+        parent::__construct($repository, $entityManager, $factory);
     }
 
     /**
