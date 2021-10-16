@@ -27,11 +27,12 @@ abstract class BaseController extends AbstractController
         $this->factory = $factory;
     }
 
-    public function buscarTodos(): Response
+    public function buscarTodos(Request $request): Response
     {
-        $entityList = $this->repository->findAll();
+        $informacoesDeOrdenacao = $request->query->get('sort');
+        $lista = $this->repository->findBy([], $informacoesDeOrdenacao);
 
-        return new JsonResponse($entityList);
+        return new JsonResponse($lista);
     }
 
     public function buscarUm(int $id): Response
