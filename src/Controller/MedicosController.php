@@ -14,19 +14,16 @@ use Doctrine\ORM\EntityManagerInterface;
 class MedicosController extends BaseController
 {
 
-    private $entityManager;
     private $medicoFactory;
-    private $medicosRepository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         MedicoFactory $medicoFactory,
         MedicosRepository $medicosRepository
     ) {
-        parent::__construct($medicosRepository);
+        parent::__construct($medicosRepository, $entityManager);
         $this->entityManager = $entityManager;
         $this->medicoFactory = $medicoFactory;
-        $this->medicosRepository = $medicosRepository;
     }
 
     /**
@@ -41,19 +38,6 @@ class MedicosController extends BaseController
         $this->entityManager->flush();
 
         return new JsonResponse($medico);
-    }
-
-    /**
-     * @Route("/medicos/{id}", methods={"GET"})
-     */
-    public function buscarUm(int $id): Response
-    {
-
-        $medico = $this->buscaMedico($id);
-
-        $codigoRetorno = is_null($medico) ? Response::HTTP_NO_CONTENT : 200;
-
-        return new JsonResponse($medico,$codigoRetorno);
     }
 
     /**
@@ -83,20 +67,8 @@ class MedicosController extends BaseController
     public function buscaMedico(int $id)
     {
 
-        $medico = $this->medicosRepository->find($id);
+        $medico = $this->repository->find($id);
         return $medico;
-    }
-
-    /**
-     * @Route("/medicos/{id}", methods={"DELETE"})
-     */
-    public function remove(int $id): Response
-    {
-        $medico = $this->buscaMedico($id);
-        $this->entityManager->remove($medico);
-        $this->entityManager->flush();
-
-        return new Response('', Response::HTTP_NO_CONTENT);
     }
 
     /**
@@ -105,7 +77,7 @@ class MedicosController extends BaseController
     public function buscaPorEspecialidade(int $especialidadeId): Response
     {
 
-        $medicos = $this->medicosRepository->findBy([
+        $medicos = $this->repository->findBy([
             'especialidade' => $especialidadeId
         ]);
 

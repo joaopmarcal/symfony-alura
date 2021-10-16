@@ -12,16 +12,12 @@ use Doctrine\ORM\EntityManagerInterface;
 
 class EspecialidadesController extends BaseController
 {
-    private $entityManager;
-    private $repository;
 
     public function __construct(
         EntityManagerInterface $entityManager,
         EspecialidadeRepository $repository
     ) {
-        parent::__construct($repository);
-        $this->entityManager = $entityManager;
-        $this->repository = $repository;
+        parent::__construct($repository, $entityManager);
     }
     /**
      * @Route("/especialidades", methods={"POST"})
@@ -41,14 +37,6 @@ class EspecialidadesController extends BaseController
     }
 
     /**
-     * @Route("/especialidades/{id}", methods={"GET"})
-     */
-    public function buscarUma(int $id): Response
-    {
-        return new JsonResponse($this->repository->find($id));
-    }
-
-    /**
      * @Route("/especialidades/{id}", methods={"PUT"})
      */
     public function atualiza(int $id, Request $request): Response
@@ -65,15 +53,4 @@ class EspecialidadesController extends BaseController
         return new JsonResponse($especialidade);
     }
 
-    /**
-     * @Route("/especialidades/{id}", methods={"DELETE"})
-     */
-    public function remove(int $id): Response
-    {
-        $especialidade = $this->repository->find($id);
-        $this->entityManager->remove($especialidade);
-        $this->entityManager->flush();
-
-        return new Response('', Response::HTTP_NO_CONTENT);
-    }
 }
