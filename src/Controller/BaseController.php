@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Helper\EntidadeFactory;
 use App\Helper\ExtratorDadosRequest;
+use App\Helper\ResponseFactory;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -42,13 +43,27 @@ abstract class BaseController extends AbstractController
             $itensPorPagina,
             ($paginaAtual - 1) * $itensPorPagina
         );
-
-        return new JsonResponse($lista);
+        $fabricaResposta = new ResponseFactory(
+            true,
+            $lista,
+            Response::HTTP_OK,
+            $paginaAtual,
+            $itensPorPagina,
+        );
+        return $fabricaResposta->getResponse();
     }
 
     public function buscarUm(int $id): Response
     {
-        return new JsonResponse($this->repository->find($id));
+        $entidade = $this->repository->find($id);
+        $statusResposta = is_null($entidade) ? Response::HTTP_NO_CONTENT : Response::HTTP_OK;
+        $fabricaResposta = new ResponseFactory(
+            true,
+            $entidade,
+            $statusResposta
+        );
+
+        return $fabricaResposta->getResponse();
     }
 
     public function remove(int $id): Response
