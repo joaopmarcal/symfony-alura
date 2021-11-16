@@ -33,9 +33,15 @@ abstract class BaseController extends AbstractController
 
     public function buscarTodos(Request $request): Response
     {
-        $informacoesDeFiltro = $this->extratorDadosRequest->buscarDadosFiltro($request);
+        $filtro = $this->extratorDadosRequest->buscarDadosFiltro($request);
         $informacoesDeOrdenacao = $this->extratorDadosRequest->buscarDadosOrdenacao($request);
-        $lista = $this->repository->findBy($informacoesDeFiltro, $informacoesDeOrdenacao);
+        [$paginaAtual, $itensPorPagina] = $this->extratorDadosRequest->buscarDadosPaginacao($request);
+        $lista = $this->repository->findBy(
+            $filtro, 
+            $informacoesDeOrdenacao,
+            $itensPorPagina,
+            ($paginaAtual - 1) * $itensPorPagina
+        );
 
         return new JsonResponse($lista);
     }

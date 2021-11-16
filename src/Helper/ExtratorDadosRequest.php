@@ -8,11 +8,21 @@ class ExtratorDadosRequest
 {
     private function buscarDadosRequest(Request $request)
     {
-        $informacoesDeOrdenacao = $request->query->get('sort');
-        $informacoesDeFiltro = $request->query->all();
-        unset($informacoesDeFiltro['sort']);
+        $queryString = $request->query->all();
+        $dadosOrdenacao = array_key_exists('sort', $queryString)
+            ? $queryString['sort']
+            : [];
+        unset($queryString['sort']);
+        $paginaAtual = array_key_exists('page', $queryString)
+            ? $queryString['page']
+            : 1;
+        unset($queryString['page']);
+        $itensPorPagina = array_key_exists('itensPorPagina', $queryString)
+            ? $queryString['itensPorPagina']
+            : 5;
+        unset($queryString['itensPorPagina']);
 
-        return [$informacoesDeOrdenacao, $informacoesDeFiltro];
+        return [$queryString, $dadosOrdenacao, $paginaAtual, $itensPorPagina];
     }
 
     public function buscarDadosOrdenacao(Request $request)
@@ -27,5 +37,11 @@ class ExtratorDadosRequest
         [, $informacoesDeFiltro] = $this->buscarDadosRequest($request);
 
         return $informacoesDeFiltro;
+    }
+
+    public function buscarDadosPaginacao(Request $request)
+    {
+        [ , ,$paginaAtual, $itensPorPagina] = $this->buscarDadosRequest($request);
+        return [$paginaAtual, $itensPorPagina];
     }
 }
