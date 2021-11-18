@@ -36,12 +36,18 @@ class MedicosController extends BaseController
 
     }
 
-    public function atualizarEntidadeExistente($entidadeExistente, $entidadeEnviada)
+    public function atualizarEntidadeExistente(int $id, $entidade)
     {
+        $entidadeExistente = $this->repository->find($id);
+        if(is_null($entidadeExistente)){
+            throw new \InvalidArgumentException();
+        }
         $entidadeExistente
-            ->setCrm($entidadeEnviada->getCrm())
-            ->setNome($entidadeEnviada->getNome())
-            ->setEspecialidade($entidadeEnviada->getEspecialidade());
+            ->setCrm($entidade->getCrm())
+            ->setNome($entidade->getNome());
+
+        return $entidadeExistente;
+
     }
 
 }
