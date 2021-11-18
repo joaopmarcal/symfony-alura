@@ -8,26 +8,26 @@ use App\Helper\ResponseFactory;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 abstract class BaseController extends AbstractController
 {
 
-    protected $repository;
     protected $entityManager;
+    protected $repository;
     protected $factory;
-    protected $extratorDadosRequest;
+    private $extratorDadosRequest;
 
     public function __construct(
-        ObjectRepository $repository,
         EntityManagerInterface $entityManager,
+        ObjectRepository $repository,
         EntidadeFactory $factory,
         ExtratorDadosRequest $extratorDadosRequest
     ){
-        $this->repository = $repository;
         $this->entityManager = $entityManager;
+        $this->repository = $repository;
         $this->factory = $factory;
         $this->extratorDadosRequest = $extratorDadosRequest;
     }

@@ -16,7 +16,7 @@ class EspecialidadesController extends BaseController
         EspecialidadeFactory $factory,
         ExtratorDadosRequest $extratorDadosRequest
     ) {
-        parent::__construct($repository, $entityManager, $factory, $extratorDadosRequest);
+        parent::__construct($entityManager, $repository, $factory, $extratorDadosRequest);
     }
 
     public function atualizarEntidadeExistente($entidadeExistente, $entidadeEnviada)

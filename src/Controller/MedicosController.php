@@ -19,7 +19,7 @@ class MedicosController extends BaseController
         MedicosRepository $medicosRepository,
         ExtratorDadosRequest $extratorDadosRequest
     ) {
-        parent::__construct($medicosRepository, $entityManager,$medicoFactory, $extratorDadosRequest);
+        parent::__construct($entityManager, $medicosRepository,$medicoFactory, $extratorDadosRequest);
     }
 
     /**

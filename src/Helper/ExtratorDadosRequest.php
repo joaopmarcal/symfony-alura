@@ -11,7 +11,7 @@ class ExtratorDadosRequest
         $queryString = $request->query->all();
         $dadosOrdenacao = array_key_exists('sort', $queryString)
             ? $queryString['sort']
-            : [];
+            : null;
         unset($queryString['sort']);
         $paginaAtual = array_key_exists('page', $queryString)
             ? $queryString['page']
@@ -27,16 +27,16 @@ class ExtratorDadosRequest
 
     public function buscarDadosOrdenacao(Request $request)
     {
-        [$informacoesDeOrdenacao, ] = $this->buscarDadosRequest($request);
+        [, $ordenacao ] = $this->buscarDadosRequest($request);
 
-        return $informacoesDeOrdenacao;
+        return $ordenacao;
     }
 
     public function buscarDadosFiltro(Request $request)
     {
-        [, $informacoesDeFiltro] = $this->buscarDadosRequest($request);
+        [$filtro,] = $this->buscarDadosRequest($request);
 
-        return $informacoesDeFiltro;
+        return $filtro;
     }
 
     public function buscarDadosPaginacao(Request $request)
